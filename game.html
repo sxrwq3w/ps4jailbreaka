@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS4 (جـلبريــــــك)</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .game {
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        img {
+            width: 100%;
+            border-radius: 5px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>PS4 (كــرار)الالـعـاب العـربيـة</h1>
+    
+    <div class="game-container" id="gameDisplay"></div>
+
+    <script>
+        const games = JSON.parse(localStorage.getItem('games')) || [];
+
+        function displayGames() {
+            const gameDisplay = document.getElementById('gameDisplay');
+            gameDisplay.innerHTML = '';
+            games.forEach(game => {
+                const gameDiv = document.createElement('div');
+                gameDiv.className = 'game';
+                gameDiv.innerHTML = `
+                    <h3>${game.name}</h3>
+                    <p>رابط تنزيل اللعبة: <a href="${game.downloadLink}" target="_blank">${game.downloadLink}</a></p>
+                    <p>رابط تنزيل التحديث: <a href="${game.updateLink}" target="_blank">${game.updateLink}</a></p>
+                    <p>رابط تنزيل الإضافات: <a href="${game.addonLink}" target="_blank">${game.addonLink}</a></p>
+                    <img src="${game.image}" alt="${game.name}" />
+                `;
+                gameDisplay.appendChild(gameDiv);
+            });
+        }
+
+        window.onload = displayGames;
+    </script>
+
+</body&gt;
+</html>

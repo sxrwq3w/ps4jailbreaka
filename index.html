@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة ألعاب PS4</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        input, textarea, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #222;
+            color: white;
+        }
+        .game-list {
+            margin: 20px 0;
+        }
+        .game-item {
+            background-color: #1e1e1e;
+            margin-top: 10px;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>واجهة إدارة ألعاب PS4</h1>
+
+    <form id="gameForm">
+        <input type="text" id="gameName" placeholder="اسم اللعبة" required />
+        <input type="url" id="gameDownloadLink" placeholder="رابط تنزيل اللعبة" required />
+        <input type="url" id="gameUpdateLink" placeholder="رابط تنزيل التحديث" required />
+        <input type="url" id="gameAddonLink" placeholder="رابط تنزيل الإضافات" required />
+        <input type="file" id="gameImage" accept="image/*" required />
+        <button type="submit">إضافة اللعبة</button>
+    </form>
+
+    <div class="game-list" id="gameList"></div>
+
+    <script>
+        const games = JSON.parse(localStorage.getItem('games')) || [];
+
+        document.getElementById('gameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const gameName = document.getElementById('gameName').value;
+            const gameDownloadLink = document.getElementById('gameDownloadLink').value;
+            const gameUpdateLink = document.getElementById('gameUpdateLink').value;
+            const gameAddonLink = document.getElementById('gameAddonLink').value;
+            const gameImage = document.getElementById('gameImage').files[0];
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newGame = {
+                    name: gameName,
+                    downloadLink: gameDownloadLink,
+                    updateLink: gameUpdateLink,
+                    addonLink: gameAddonLink,
+                    image: e.target.result
+                };
+
+                games.push(newGame);
+                localStorage.setItem('games', JSON.stringify(games));
+                displayGames();
+                document.getElementById('gameForm').reset();
+            };
+            reader.readAsDataURL(gameImage);
+        });
+
+        function displayGames() {
+            const gameList = document.getElementById('gameList');
+            gameList.innerHTML = '';
+            games.forEach((game, index) => {
+                const gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.innerHTML = `
+                    <h3>${game.name}</h3>
+                    <p>رابط تنزيل اللعبة: <a href="${game.downloadLink}" target="_blank">${game.downloadLink}</a></p>
+                    <p>رابط تنزيل التحديث: <a href="${game.updateLink}" target="_blank">${game.updateLink}</a></p>
+                    <p>رابط تنزيل الإضافات: <a href="${game.addonLink}" target="_blank">${game.addonLink}</a></p>
+                    <img src="${game.image}" alt="${game.name}" style="width: 100%; height: auto;" />
+                    <button onclick="removeGame(${index})">إزالة اللعبة</button>
+                `;
+                gameList.appendChild(gameItem);
+            });
+        }
+
+        function removeGame(index) {
+            games.splice(index, 1);
+            localStorage.setItem('games', JSON.stringify(games));
+            displayGames();
+        }
+
+        window.onload = displayGames;
+    </script>
+
+</body>
+</html>
